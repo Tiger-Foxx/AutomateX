@@ -737,7 +737,7 @@ def construire_automate_caractere(caractere):
     
     transition = Transition(start, end, caractere)
     
-    automate = Automate(f"Automate_{caractere}")
+    automate = Automate(f"A_{caractere}")
     automate.add_etat(start)
     automate.add_etat(end)
     automate.add_transition(transition)
@@ -759,7 +759,7 @@ def construire_etoile_kleene(automate):
     start = Etat(is_initial=True)
     end = Etat(is_final=True)
     
-    new_automate = Automate(f"Kleene_{automate.nom}")
+    new_automate = Automate(f"K_{automate.nom}")
     
     new_automate.add_etat(start)
     new_automate.add_etat(end)
@@ -769,19 +769,22 @@ def construire_etoile_kleene(automate):
         
     for transition in automate.transitions:
         new_automate.add_transition(transition)
-    
+    #l'ancien etat initial ne l'est plus
+    automate.etats_initiaux[0].make_non_initial()
     # Transition de qs vers l'état initial de l'automate
     new_automate.add_transition(Transition(start, automate.etats_initiaux[0], ""))
-    #l'ancien etat initial ne l'est plus
-    #automate.etats_initiaux[0].make_non_initial()
+    
     # Transition de qs vers qf (pour l'étoile de Kleene vide)
     new_automate.add_transition(Transition(start, end, ""))
     
     # Transition des états finaux de l'automate vers qf et vers l'état initial
-    for final_state in automate.etats_finaux:
+    for i,final_state in enumerate(automate.etats_finaux):
+        final_state.make_non_final()
+        automate.etats_finaux[i].make_non_final()
         new_automate.add_transition(Transition(final_state, end, ""))
         new_automate.add_transition(Transition(final_state, automate.etats_initiaux[0], ""))
-        final_state.make_non_final()
+        
+        
 
     return new_automate
 
@@ -796,8 +799,11 @@ def construire_concatenation(automate1, automate2):
     Returns:
         Automate: L'automate résultant de la concaténation des deux automates.
     """
-    new_automate = Automate(f"Concat_{automate1.nom}_{automate2.nom}")
-    
+    new_automate = Automate(f"C_{automate1.nom}_{automate2.nom}")
+    #l'ancien etat initial ne l'est plus
+    for i, final_state in enumerate(automate2.etats_initiaux):
+        automate2.etats_initiaux[i].make_non_initial()
+    automate1.etats_finaux[0].make_non_final()
     for etat in automate1.etats:
         new_automate.add_etat(etat)
         
@@ -810,12 +816,15 @@ def construire_concatenation(automate1, automate2):
     for transition in automate2.transitions:
         new_automate.add_transition(transition)
     
+    
     # Transition des états finaux de automate1 vers l'état initial de automate2
-    for final_state in automate1.etats_finaux:
-        new_automate.add_transition(Transition(final_state, automate2.etats_initiaux[0], ""))
+    for i, final_state in enumerate(automate1.etats_finaux):
+        automate1.etats_finaux[i].make_non_final()
         final_state.make_non_final()
-    #l'ancien etat initial ne l'est plus
-    #automate2.etats_initiaux[0].make_non_initial()
+        new_automate.add_transition(Transition(final_state, automate2.etats_initiaux[0], ""))
+        
+        
+    
     
     return new_automate
 
@@ -833,11 +842,18 @@ def construire_union(automate1, automate2):
     start = Etat(is_initial=True)
     end = Etat(is_final=True)
     
-    new_automate = Automate(f"Union_{automate1.nom}_{automate2.nom}")
+    new_automate = Automate(f"U_{automate1.nom}_{automate2.nom}")
     
     new_automate.add_etat(start)
     new_automate.add_etat(end)
-    
+    #l'ancien etat initial ne l'est plus
+    automate1.etats_initiaux[0].make_non_initial()
+    #l'ancien etat initial ne l'est plus
+    automate2.etats_initiaux[0].make_non_initial()
+    #l'ancien etat initial ne l'est plus
+    automate1.etats_finaux[0].make_non_final()
+    #l'ancien etat initial ne l'est plus
+    automate2.etats_finaux[0].make_non_final()
     for etat in automate1.etats:
         new_automate.add_etat(etat)
         
@@ -862,10 +878,7 @@ def construire_union(automate1, automate2):
     for final_state in automate2.etats_finaux:
         new_automate.add_transition(Transition(final_state, end, ""))
         final_state.make_non_final()
-    #l'ancien etat initial ne l'est plus
-    #automate1.etats_initiaux[0].make_non_initial()
-    #l'ancien etat initial ne l'est plus
-    #automate2.etats_initiaux[0].make_non_initial()
+    
 
     return new_automate
 
@@ -1103,6 +1116,7 @@ def construire_automate_a_plus_b():
 
 def construire_automate_thompson(expression):
     postfix_expression=infix_to_postfix(expression)
+    print(postfix_expression)
     if postfix_expression=="":
         return automate_mot_vide()
     stack = []
@@ -1140,7 +1154,7 @@ def construire_automate_thompson(expression):
 
 
 def test_automate(automate, mot):
-    reconnu, index = automate.verifier_mot(mot)
+    reconnu, index , calcul= automate.verifier_mot(mot)
     if reconnu:
         print(f"Le mot '{mot}' est reconnu par l'automate.")
     else:
@@ -1151,12 +1165,13 @@ def test_automate(automate, mot):
  
 
 def tester_mot():
-
-  while True :            
-
+    expression = "ab*"
+    automate= construire_automate_thompson(expression).eliminer_epsilon_transitions() 
+    while True :           
       mot=input("entre le mot : ")
-      test_automate(creer_automate_aa(),mot)
+      test_automate(automate,mot)
 
+#tester_mot()
 
 
 def test_NFA():

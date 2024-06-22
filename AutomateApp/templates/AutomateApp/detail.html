@@ -39,33 +39,117 @@
                               <li><a class="dropdown-item" href="{% url 'creer_complet' automate.id %}">Completer</a></li>
                           </ul>
                       </div>
-                      <h5 class="card-title">Table de l'automate: {{ automate.nom }}</h5>
+                      
   
                       <!-- Table with stripped rows -->
-                      <table class="table table-striped table-bordered" style="overflow: scroll;">
-                          <thead>
-                              <tr>
-                                  <th scope="col">État</th>
-                                  {% for etiquette in etiquettes %}
-                                  <th scope="col">{{ etiquette }}</th>
-                                  {% endfor %}
-                              </tr>
-                          </thead>
-                          <tbody>
-                              {% for etat, transitions in tableau %}
-                              <tr>
-                                  <th scope="row">{{ etat }} </th>
-                                  {% for i in etiquettes|length|range %}
-                                  <td>{{ transitions|index:i }}</td>
-                                  {% endfor %}
-                              </tr>
-                              {% endfor %}
-                          </tbody>
-                      </table>
+                     
+                     {% if automate_classe.is_determinist %}
+                     <h5 class="card-title">Table de l'automate: {{ automate.nom }}</h5>
+                     
+                         <table class="table table-striped table-bordered" style="overflow: scroll;">
+                            
+                             <thead>
+                                 <tr>
+                                     <th scope="col">État</th>
+                                     {% for etiquette in etiquettes %}
+                                     <th scope="col">{{ etiquette }}</th>
+                                     {% endfor %}
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {% for etat, transitions in tableau %}
+                                 <tr>
+                                     <th scope="row">{{ etat }} </th>
+                                     {% for i in etiquettes|length|range %}
+                                     <td>{{ transitions|index:i }}</td>
+                                     {% endfor %}
+                                 </tr>
+                                 {% endfor %}
+                             </tbody>
+                         </table>
+
+
+                         {% else %}
+                         <h5 class="card-title">Tables de l'automate: {{ automate.nom }}</h5>
+                         <h5 class="card-title">Etats</h5>
+                         <table class="table table-striped table-bordered" style="overflow: scroll;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">État</th>
+                                    
+                                    <th scope="col">final</th>
+
+                                    <th scope="col">initial</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for etat in etats %}
+                                <tr>
+                                    <th scope="row">{{ etat.nom }} </th>
+                                    
+                                    {% if etat.is_final %}
+                                    <td>OUI</td>
+                                    {% else %}
+                                    <td>NON</td>
+                                    {% endif %}
+                                        
+                                    
+                                    {% if etat.is_initial  %}
+                                    <td>OUI</td>
+                                    {% else %}
+                                    <td>NON</td>
+                                    {% endif %}
+                                        
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <h5 class="card-title">Transitions</h5>
+                        <table class="table table-striped table-bordered" style="overflow: scroll;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">DEPART</th>
+                                    <th scope="col">ETIQUETTE</th>
+                                    <th scope="col">ARRIVE</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for  transition in transitions %}
+                                <tr>
+                                    <th scope="row">{{ transition.etat_depart.nom }} 
+                                    {% if transition.etat_depart.is_initial %}
+                                         - initial
+                                    {% elif transition.etat_depart.is_final %}
+                                         - final
+                                     {% endif %}
+                                         </th>
+                                    <td>{{ transition.etiquette }}</td>
+                                    <th scope="row">{{ transition.etat_arrivee.nom }}
+                                        {% if transition.etat_arrivee.is_initial %}
+                                        - initial
+                                   {% elif transition.etat_arrivee.is_final %}
+                                        - final
+                                    {% endif %}    
+                                    </th>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                     {% endif %}
+                        
   
                       <h5 class="card-title">Information:</h5>
                       <div class="information">
-                          <h6 style="font-weight: 900; color:blue" >Calcul : {{ calcul }}</h6>
+                        
+                        {% if automate_classe.is_determinist %}
+                        <h6 style="font-weight: 900; color:blue" >Calcul : {{ calcul }}</h6>
+                        {% endif %}
+                            
+                          
                           
                           {% if reconnu %}
                           <h6 style="font-weight: 900;color:green">Résultat : {{ message }}</h6>
