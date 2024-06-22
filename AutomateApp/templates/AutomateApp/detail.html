@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+{% load static %}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Detail de L'automate</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Accuiel</a></li>
+        <li class="breadcrumb-item">Liste Automates</li>
+        <li class="breadcrumb-item active">Nom de l'automate</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+     
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-body">
+            <div class="filter detail">
+              <a class="icon" href="#" data-bs-toggle="dropdown">Operation  <i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Operation</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Determiniser</a></li>
+                <li><a class="dropdown-item" href="#">minimiser</a></li>
+              </ul>
+            </div>
+            <h5 class="card-title">Table de l'automate:Nom
+            </h5>
+
+            <!-- Table with stripped rows -->
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Etat</th>
+                  <th scope="col">Etiquette1</th>
+                  <th scope="col">Etiquette2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>2</td>
+                  <td>/</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>2</td>
+                  <td>3</td>
+                </tr>
+                
+              </tbody>
+            </table>
+
+            <h5 class="card-title">Information:</h5>
+            <div class="information">
+              <h6>Etat initiale:</h6>
+              <h6>Etat finale:</h6>
+              <h6>Automate fini deterministe/Automate fini non deterministe</h6>
+            </div>
+            <h5 class="card-title">Rechercher un mot</h5>
+            <form action="" method="POST">
+              {% csrf_token %}
+              
+              <div class="row mb-3">
+                <label for="inputText" class="col-sm-2 col-form-label">Entrez un Mot:</label>
+                <div class="col-sm-10">
+                  <input type="text" name="nom" class="form-control">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <button type="submit" class="btn btn-primary">rechercher</button>
+                </div>
+              </div>
+
+            </form><!-- End General Form Elements -->
+            
+            <!-- End Table with stripped rows -->
+
+          </div>
+        </div>
+
+        
+
+      </div>
+    </div>
+  </section>
+
+</main><!-- End #main -->
+
+  {% endblock %}
