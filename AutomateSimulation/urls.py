@@ -26,11 +26,16 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',index,name='index'),
-    # path('create_transition/', views.create_transition, name='create_transition'),
+    path('liste_automate/', liste_automate, name='liste_automate'),
     path('editer_description/<int:automate_id>', editer_description, name='editer_description'),
+    path('supprimer/<int:automate_id>', supprimer, name='supprimer'),
+    
     path('create_automate_par_description/', create_automate_par_description, name='create_automate_par_description'),
-    # path('edit_automate/<int:automate_id>/', views.edit_automate, name='edit_automate'),
+    path('tester/<int:automate_id>/', page_test, name='tester'),
     path('create_automate_from_regex/', create_automate_from_regex, name='create_automate_from_regex'),
+    path('automate/<int:automate_id>/creer_determinise/', creer_determinise, name='creer_determinise'),
+    path('automate/<int:automate_id>/creer_minimise/', creer_minimise, name='creer_minimise'),
+    path('automate/<int:automate_id>/creer_complet/', creer_complet, name='creer_complet'),
     # path('determinise_automate/<int:automate_id>/', views.determinise_automate, name='determinise_automate'),
     # path('minimise_automate/<int:automate_id>/', views.minimise_automate, name='minimise_automate'),
     # path('complementaire_automate/<int:automate_id>/', views.complementaire_automate, name='complementaire_automate'),

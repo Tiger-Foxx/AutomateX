@@ -319,24 +319,15 @@ class Automate:
               if self.get_alphabet() - transitions_sortantes:
                   return False
           return True
-  def verifier_mot(self, mot):
-    # cas particulier du mot vide en fait 
-        if mot == "":
-          return any(etat.is_initial and etat.is_final for etat in self.etats)
-        etats_actuels = [etat for etat in self.etats if etat.is_initial]
-        for index, lettre in enumerate(mot):
-            prochains_etats = []
-            for etat in etats_actuels:
-                for transition in self.transitions:
-                    if transition.etat_depart == etat and transition.etiquette == lettre:
-                        prochains_etats.append(transition.etat_arrivee)
-            if not prochains_etats:
-                return False, index
-            etats_actuels = prochains_etats
 
-        is_reconnu = any(etat.is_final for etat in etats_actuels)
-        return is_reconnu, len(mot) if is_reconnu else -1
-  
+  def contient_transitions_vides(self):
+        """
+        Vérifie si l'automate contient des transitions epsilon.
+
+        Returns:
+            bool: True si des transitions epsilon existent, False sinon.
+        """
+        return any(transition.etiquette=="" or transition.etiquette=='' for transition in self.transitions)
   def trier_etats(self):
         """
         Trie la liste des états par ordre alphabétique de leur nom.
@@ -413,7 +404,46 @@ class Automate:
         return automate_dfa
 
 
-  
+  def get_etat_by_nom(self, nom):
+        for etat in self.etats:
+            if etat.nom == nom:
+                return etat
+        return None
+
+  def verifier_mot(self, mot):
+        etait_async = False
+        
+        calcul = []
+        if mot == "":
+            for etat in self.etats_initiaux:
+                if etat.is_final:
+                    calcul.append(f"({etat.nom},ε,{etat.nom})-final")
+                    return True, 0, " ".join(calcul)
+            return False, 0, " ".join(calcul)
+
+        etats_actuels = [etat for etat in self.etats if etat.is_initial]
+        for index, lettre in enumerate(mot):
+            prochains_etats = []
+            for etat in etats_actuels:
+                for transition in self.transitions:
+                    if transition.etat_depart == etat and transition.etiquette == lettre:
+                        prochains_etats.append(transition.etat_arrivee)
+                        calcul.append(f"({transition.etat_depart.nom},{lettre},{transition.etat_arrivee.nom})")
+            if not prochains_etats:
+                calcul="calcul  -----    impossible"
+                return False, index, " ".join(calcul)
+            etats_actuels = prochains_etats
+
+        is_reconnu = any(etat.is_final for etat in etats_actuels)
+        if is_reconnu:
+            calcul.append("-final")
+        else:
+            calcul.append("-non final")
+            
+        if etait_async:
+            calcul=" Nous avons elimites les transitions asynchrones vant le test"
+        return is_reconnu, len(mot) if is_reconnu else -1, " ".join(calcul)
+
 
   def minimiser(self):
         """

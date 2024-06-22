@@ -73,16 +73,117 @@ def create_automate_from_regex(request):
     return render(request, 'AutomateApp/expression_reguliere.html')
 
 
+def liste_automate(request):
+    automates = Automate.objects.all()
+    automates_info = []
+
+    for automate in automates:
+        automate_classe = automate.to_classe()
+        automates_info.append({
+            'id':automate.id,
+            'nom': automate.nom,
+            'date_creation': automate.date,
+            'nombre_etats': len(automate_classe.etats),
+            'is_deterministe': automate_classe.est_deterministe()[0]
+        })
+
+    return render(request, 'AutomateApp/liste_automate.html', {'automates_info': automates_info})
+
+def supprimer(request,automate_id):
+    
+    automate = get_object_or_404(Automate, id=automate_id)
+    automate.delete()
+
+    return redirect('liste_automate')
+
+
+
+from django.shortcuts import render, get_object_or_404
+
+def page_test(request, automate_id):
+    automate = get_object_or_404(Automate, id=automate_id)
+    automate_classe = automate.to_classe()
+
+    resultat = None
+    calcul = "Le calcul s'affiche ici "
+    message = "Le Resultat ICI"
+    mot = ""
+
+    if request.method == 'POST':
+        mot = request.POST.get('mot')
+        is_reconnu, position,calcul = automate_classe.verifier_mot(mot)
+        if is_reconnu:
+            resultat = True
+            message = f"Mot reconnu ! "
+        else:
+            resultat = False
+            message = f"Mot non reconnu "
+
+    etats = automate_classe.etats
+    etiquettes = list(set(transition.etiquette for transition in automate_classe.transitions ))
+
+    tableau = []
+    for etat in etats:
+        transitions_list = ["/"] * len(etiquettes)
+        for transition in automate_classe.transitions:
+            if transition.etat_depart.nom == etat.nom:
+                index = etiquettes.index(transition.etiquette)
+                transitions_list[index] = transition.etat_arrivee.nom
+        if etat.is_initial:
+            etat.nom=">>"+etat.nom
+        if etat.is_final:
+            etat.nom=etat.nom+">>"
+        tableau.append((etat.nom, transitions_list))
+
+    contient_transitions_vides = automate_classe.contient_transitions_vides()
+    est_complet = automate_classe.est_complet()
+    for i in range(len(etiquettes)):
+        if etiquettes[i] == "" or not etiquettes[i]:
+            
+            etiquettes[i] = "ε"
+
+    print(etiquettes)    
+    return render(request, 'AutomateApp/detail.html', context={
+        'automate': automate,
+        'tableau': tableau,
+        'etiquettes': etiquettes,
+        'resultat': resultat,
+        'message': message,
+        'calcul': calcul,
+        'mot': mot,
+        'automate_classe': automate_classe,
+        'contient_transitions_vides': contient_transitions_vides,
+        'est_complet': est_complet,
+        'reconnu':is_reconnu if request.method == 'POST' else None,
+    })
 
 
 
 
+def creer_determinise(request, automate_id):
+    automateModel = get_object_or_404(Automate, id=automate_id)
+    
+    automate=automateModel.to_classe()
+    automate = automate.determiniser()
+    nom="determinise_"+automateModel.nom
+    A=Automate_to_django(nom=nom,automate_class=automate)
+    return redirect('tester', automate_id=A.id)
 
+def creer_minimise(request, automate_id):
+    automateModel = get_object_or_404(Automate, id=automate_id)
+    automate=automateModel.to_classe()
+    automate = automate.determiniser()
+    nom="minimise_"+automateModel.nom
+    A=Automate_to_django(nom=nom,automate_class=automate)
+    return redirect('tester', automate_id=A.id)
 
-
-
-
-
+def creer_complet(request, automate_id):
+    automateModel = get_object_or_404(Automate, id=automate_id)
+    automate=automateModel.to_classe()
+    automate = automate.determiniser()
+    nom="complet_"+automateModel.nom
+    A=Automate_to_django(nom=nom,automate_class=automate)
+    return redirect('tester', automate_id=A.id)
 
 
 

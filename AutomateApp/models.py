@@ -1,31 +1,35 @@
+import datetime
 from django.db import models
+from .classes.classes import Etat as EtatClass, Transition as TransitionClass, Automate as AutomateClass
 
-# Create your models here.
-
-from django.db import models
-from .classes.classes import Etat as EtatClass , Transition as TransitionClass,Automate as AutomateClass 
 class Automate(models.Model):
     nom = models.CharField(max_length=100)
-
+    date=models.DateField(auto_now=True,editable=False)
     def to_classe(self):
         """
         Convertit cet objet Automate Django en objet Automate Python.
         
         Returns:
-            Automate: L'objet Automate Python correspondant.
+            AutomateClass: L'objet Automate Python correspondant.
         """
         automate = AutomateClass(nom=self.nom)
         etats_django = self.etats.all()
+        etat_map = {}
+
         for etat_django in etats_django:
-            etat = etat_django.to_classe()
+            etat = EtatClass(nom=etat_django.nom, is_initial=etat_django.is_initial, is_final=etat_django.is_final)
             automate.add_etat(etat)
+            etat_map[etat_django.id] = etat
         
         transitions_django = Transition.objects.filter(etat_depart__automate=self)
         for transition_django in transitions_django:
-            transition = transition_django.to_classe()
+            etat_depart = etat_map[transition_django.etat_depart.id]
+            etat_arrivee = etat_map[transition_django.etat_arrivee.id]
+            transition = TransitionClass(etat_depart=etat_depart, etat_arrivee=etat_arrivee, etiquette=transition_django.etiquette, is_epsilon_transition=transition_django.is_epsilon_transition)
             automate.add_transition(transition)
         
         return automate
+
     def __str__(self):
         return f"Automate {self.nom}" 
 
