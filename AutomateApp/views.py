@@ -104,6 +104,9 @@ def page_test(request, automate_id):
     automate = get_object_or_404(Automate, id=automate_id)
     automate_classe = automate.to_classe()
     contient_transitions_vides = automate_classe.contient_transitions_vides()
+    if construire_automate_thompson:
+        automate_classe=automate_classe.eliminer_epsilon_transitions()
+        
     est_complet = automate_classe.est_complet()
     afficher_automate(automate_classe)
     resultat = None
