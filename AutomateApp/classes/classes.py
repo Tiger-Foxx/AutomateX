@@ -441,7 +441,7 @@ class Automate:
             calcul.append("-non final")
             
         if etait_async:
-            calcul=" Nous avons elimites les transitions asynchrones vant le test"
+            calcul=" Nous avons elimines les transitions asynchrones avant le test"
         return is_reconnu, len(mot) if is_reconnu else -1, " ".join(calcul)
 
 
