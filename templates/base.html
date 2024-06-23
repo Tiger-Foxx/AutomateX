@@ -44,7 +44,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center">
         <span class="d-none d-lg-block">AutomateX</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -73,7 +73,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.html">
+        <a class="nav-link " href="{% url 'index' %}">
           <i class="bi bi-grid"></i>
           <span>Accueil</span>
         </a>
@@ -87,12 +87,12 @@
         <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{% url 'create_automate_from_regex' %}">
-              <i class="bi bi-circle"></i><span>Expression reguliere</span>
+              <i class="bi bi-circle"></i><span>En definissant l'Expression reguliere</span>
             </a>
           </li>
           <li>
             <a href="{% url 'create_automate_par_description' %}">
-              <i class="bi bi-circle"></i><span>Description</span>
+              <i class="bi bi-circle"></i><span>En definissant les Etats-transitions</span>
             </a>
           </li>
           

@@ -6,10 +6,11 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Construire un automate a parti d'une Expression Regulier</h1>
+      <h1>Construire un automate a partir d'une Expression Reguliere</h1>
+      <h6 style="color: rgb(244, 140, 23);">NB: la methode de Thomson pure sera utilisee , mais les transitions spontanee seront enlevee a la fin ,<br> vous aures aussi la possibilite de le minimiser</h6>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Accuiel</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'index' %}">Acceuil</a></li>
           <li class="breadcrumb-item">Construire un Automate</li>
           <li class="breadcrumb-item active">Expresion Regulier</li>
         </ol>
@@ -22,20 +23,20 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Definition de L'Expression Regulier</h5>
+              <h5 class="card-title">Definition de L'Expression Reguliere</h5>
 
               <!-- General Form Elements -->
               <form action="{% url 'create_automate_from_regex' %}" method="POST">
                 {% csrf_token %}
                 
                 <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Entrez le Nom</label>
+                  <label for="inputText" class="col-sm-2 col-form-label">Entrez le Nom de l'automate</label>
                   <div class="col-sm-10">
                     <input type="text" name="nom" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Entrez l'expression regulierE</label>
+                  <label for="inputText" class="col-sm-2 col-form-label">Entrez l'expression reguliere</label>
                   <div class="col-sm-10">
                     <input type="text" name="regex" class="form-control">
                   </div>

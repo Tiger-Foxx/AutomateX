@@ -10,7 +10,7 @@
     <h1>Testez L'automate {{automate.nom}}</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Acceuil</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Acceuil</a></li>
         <li class="breadcrumb-item">Liste Automates</li>
         <li class="breadcrumb-item active">{% if automate_classe.is_determinist %}
             <span style="color: greenyellow;">Déterministe</span>
