@@ -295,8 +295,10 @@ class Automate:
                         raisons.append(f"Multiples transitions sortantes avec l'étiquette '{transition.etiquette}' de l'état {etat.nom}.")
                     else:
                         etiquettes[transition.etiquette] = transition.etat_arrivee
-
-        return (len(raisons) == 0, "Déterministe" if len(raisons) == 0 else ", ".join(raisons))
+        result=len(raisons) == 0
+        if self.contient_transitions_vides():
+            result=False
+        return (result, "Déterministe" if len(raisons) == 0 else ", ".join(raisons))
 
   def get_alphabet(self):
           """

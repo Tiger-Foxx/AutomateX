@@ -35,6 +35,7 @@ def editer_description(request, automate_id):
             etat_arrivee = get_object_or_404(Etat, id=etat_arrivee_id)
             transition = Transition(etat_depart=etat_depart, etat_arrivee=etat_arrivee, etiquette=etiquette)
             transition.save()
+            
         return redirect('editer_description', automate_id=automate.id)
 
     etats = Etat.objects.filter(automate=automate)
@@ -51,18 +52,18 @@ def create_automate_from_regex(request):
 
         # Créer l'automate de Thomson à partir de l'expression régulière
         automate_class = construire_automate_thompson(regex)
-
+        afficher_automate(automate_class)
         # Éliminer les transitions epsilon si spécifié
         if not_async and not determinist:
             automate_class=eliminer_epsilon_transitions(automate_class)
-
+            afficher_automate(automate_class)
         # Déterminer l'automate si spécifié
         if determinist:
             # Éliminer les transitions epsilon d'abord si nécessaire
-            automate_class=automate_class.eliminer_epsilon_transitions()
+            automate_class=eliminer_epsilon_transitions(automate_class)
             if not automate_class.est_deterministe()[0]:
                 print("on va determniniser")   
-                automate_class = automate_class.determiniser()
+                #automate_class = automate_class.determiniser()
         
 
         # Convertir l'automate de Thomson en modèle Django et sauvegarder en base de données
@@ -102,13 +103,20 @@ from django.shortcuts import render, get_object_or_404
 
 def page_test(request, automate_id):
     automate = get_object_or_404(Automate, id=automate_id)
-    automate_classe = automate.to_classe()
-    contient_transitions_vides = automate_classe.contient_transitions_vides()
-    if construire_automate_thompson:
-        automate_classe=automate_classe.eliminer_epsilon_transitions()
+    classe = automate.to_classe()
+    contient_transitions_vides = classe.contient_transitions_vides()
+    if contient_transitions_vides:
+        print("elimination")
+        afficher_automate(classe)
+        automate_classe=eliminer_epsilon_transitions(classe)
+        afficher_automate(automate_classe)
+        automate_classe=eliminer_epsilon_transitions(automate_classe)
+        afficher_automate(automate_classe)
+    else:
+        automate_classe=classe
         
     est_complet = automate_classe.est_complet()
-    afficher_automate(automate_classe)
+    #afficher_automate(automate_classe)
     resultat = None
     calcul = "Le calcul s'affiche ici "
     message = "Le Resultat ICI"
