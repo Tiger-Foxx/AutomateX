@@ -10,6 +10,7 @@ def index(request):
     return render(request, 'AutomateApp/index.html')
 
 def create_automate_par_description(request):
+
     if request.method == 'POST':
         nom = request.POST.get('nom')
         automate = Automate(nom=nom)
@@ -190,6 +191,24 @@ def creer_determinise(request, automate_id):
     automate = automate.determiniser()
     nom="determinise_"+automateModel.nom
     A=Automate_to_django(nom=nom,automate_class=automate)
+    return redirect('tester', automate_id=A.id)
+
+def complementaire_automate(request, automate_id):
+    automateModel = get_object_or_404(Automate, id=automate_id)
+    
+    # Conversion du modèle en instance de la classe Automate
+    automate = automateModel.to_classe()
+    
+    # Génération de l'automate complémentaire
+    automate = automate.complementaire()
+    
+    # Création d'un nouveau nom pour l'automate complémentaire
+    nom = "complementaire_" + automateModel.nom
+    
+    # Conversion de l'instance de la classe Automate en modèle Django
+    A = Automate_to_django(nom=nom, automate_class=automate)
+    
+    # Redirection vers la page de test de l'automate
     return redirect('tester', automate_id=A.id)
 
 def creer_minimise(request, automate_id):

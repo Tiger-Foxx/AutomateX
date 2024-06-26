@@ -38,6 +38,6 @@ urlpatterns = [
     path('automate/<int:automate_id>/creer_complet/', creer_complet, name='creer_complet'),
     # path('determinise_automate/<int:automate_id>/', views.determinise_automate, name='determinise_automate'),
     # path('minimise_automate/<int:automate_id>/', views.minimise_automate, name='minimise_automate'),
-    # path('complementaire_automate/<int:automate_id>/', views.complementaire_automate, name='complementaire_automate'),
+    path('complementaire_automate/<int:automate_id>/', complementaire_automate, name='complementaire_automate'),
     # path('eliminer_epsilon_transitions/<int:automate_id>/', views.eliminer_epsilon_transitions, name='eliminer_epsilon_transitions')
 ]
